@@ -1,0 +1,236 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#0C2242"/><stop offset="0.45" stop-color="#0B1F3A"/><stop offset="1" stop-color="#08182D"/>
+  </linearGradient>
+  <radialGradient id="glow" cx="0.5" cy="0.34" r="0.62">
+    <stop offset="0" stop-color="#12304F" stop-opacity="0.85"/><stop offset="1" stop-color="#0B1F3A" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="phoneBody" x1="0" y1="0" x2="0.6" y2="1">
+    <stop offset="0" stop-color="#0E2743"/><stop offset="1" stop-color="#061527"/>
+  </linearGradient>
+  <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#0A1E38"/><stop offset="1" stop-color="#071528"/>
+  </linearGradient>
+  <linearGradient id="bubble" x1="0" y1="0" x2="0.4" y2="1">
+    <stop offset="0" stop-color="#0B82E8"/><stop offset="1" stop-color="#0159A8"/>
+  </linearGradient>
+  <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#12304F"/><stop offset="1" stop-color="#0A2140"/>
+  </linearGradient>
+  <linearGradient id="cardGold" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#1B3454"/><stop offset="1" stop-color="#0D2440"/>
+  </linearGradient>
+  <linearGradient id="track" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#016FD0"/><stop offset="0.55" stop-color="#4E8FD0"/><stop offset="1" stop-color="#C8A951"/>
+  </linearGradient>
+  <filter id="lift" x="-30%" y="-30%" width="160%" height="180%">
+    <feDropShadow dx="0" dy="26" stdDeviation="28" flood-color="#020A14" flood-opacity="0.72"/>
+  </filter>
+  <filter id="softlift" x="-30%" y="-30%" width="160%" height="180%">
+    <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#020A14" flood-opacity="0.55"/>
+  </filter>
+</defs>
+
+<rect width="1920" height="1080" fill="url(#bg)"/>
+<rect width="1920" height="1080" fill="url(#glow)"/>
+
+<!-- ===================== watermark crest ===================== -->
+<g opacity="0.05" transform="translate(960 570)">
+  <circle r="360" fill="none" stroke="#C8A951" stroke-width="7"/>
+  <circle r="284" fill="none" stroke="#C8A951" stroke-width="3"/>
+  <g fill="#C8A951">
+    <circle cx="-208" cy="-46" r="11"/><circle cx="-166" cy="-140" r="11"/>
+    <circle cx="-72"  cy="-198" r="11"/><circle cx="72"   cy="-198" r="11"/>
+    <circle cx="166"  cy="-140" r="11"/><circle cx="208"  cy="-46"  r="11"/>
+  </g>
+  <line x1="0" y1="0" x2="166" y2="-136" stroke="#C8A951" stroke-width="13" stroke-linecap="round"/>
+  <circle r="26" fill="#C8A951"/>
+</g>
+
+<!-- ===================== top bar ===================== -->
+<line x1="0" y1="94" x2="1920" y2="94" stroke="#1E4470" stroke-width="1.5"/>
+<g transform="translate(72 26)">
+  <g transform="translate(0 3)">
+    <circle cx="21" cy="21" r="20" fill="none" stroke="#C8A951" stroke-width="2"/>
+    <circle cx="21" cy="21" r="15.5" fill="none" stroke="#C8A951" stroke-width="1"/>
+    <circle cx="9.4"  cy="18.4" r="1.5" fill="#016FD0"/>
+    <circle cx="13.6" cy="12.4" r="1.5" fill="#016FD0"/>
+    <circle cx="21"   cy="10"   r="1.5" fill="#016FD0"/>
+    <circle cx="28.4" cy="12.4" r="1.5" fill="#016FD0"/>
+    <circle cx="32.6" cy="18.4" r="1.5" fill="#C8A951"/>
+    <line x1="21" y1="21" x2="29.5" y2="13.5" stroke="#C8A951" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="21" cy="21" r="2.6" fill="#C8A951"/>
+  </g>
+  <text x="60" y="36" font-size="32" font-weight="800" letter-spacing="7" fill="#FFFFFF">SURETY</text>
+  <line x1="248" y1="10" x2="248" y2="38" stroke="#1E4470" stroke-width="1.5"/>
+  <text x="274" y="34" font-size="22" font-weight="500" fill="#93AECB">Agent Risk Underwriting  ·  Underwriter Console</text>
+</g>
+<g transform="translate(1512 24)">
+  <rect width="336" height="46" rx="23" fill="#C8A951" fill-opacity="0.10" stroke="#C8A951" stroke-opacity="0.5" stroke-width="1.5"/>
+  <circle cx="30" cy="23" r="6" fill="#C8A951"/>
+  <text x="52" y="30" font-size="19" font-weight="700" letter-spacing="3" fill="#C8A951">RESOLVED IN-FLIGHT</text>
+</g>
+
+<!-- ===================== column headers ===================== -->
+<text x="292" y="170" text-anchor="middle" font-size="20" font-weight="700" letter-spacing="3.4" fill="#C8A951">AUTHENTICATED USER INTENT</text>
+<text x="960" y="170" text-anchor="middle" font-size="22" font-weight="600" letter-spacing="3.6" fill="#93AECB">SURETY  ·  DECISION RECORD</text>
+<text x="1628" y="170" text-anchor="middle" font-size="20" font-weight="700" letter-spacing="3.4" fill="#93AECB">EXECUTED TRANSACTION</text>
+
+<!-- ===================== LEFT PHONE : intent ===================== -->
+<g filter="url(#lift)">
+  <rect x="72" y="200" width="440" height="660" rx="36" fill="url(#phoneBody)" stroke="#FFFFFF" stroke-opacity="0.17" stroke-width="1.5"/>
+</g>
+<rect x="232" y="224" width="120" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.16"/>
+<rect x="96" y="256" width="392" height="580" rx="22" fill="url(#screen)" stroke="#1E4470" stroke-width="1.5"/>
+<text x="124" y="302" font-size="19" font-weight="700" letter-spacing="3.2" fill="#C7D8EC">SHOPPING AGENT</text>
+<text x="460" y="302" font-size="19" font-weight="500" fill="#93AECB" text-anchor="end">09:41</text>
+<line x1="124" y1="322" x2="460" y2="322" stroke="#1E4470" stroke-width="1.5"/>
+
+<g filter="url(#softlift)">
+  <path d="M148 352 h300 a8 8 0 0 1 8 8 v138 a8 8 0 0 1 -8 8 h-292 a8 8 0 0 1 -8 -8 v-138 a8 8 0 0 1 8 -8 z" fill="url(#bubble)"/>
+</g>
+<text x="176" y="398" font-size="27" font-weight="500" fill="#FFFFFF">Buy noise-cancelling</text>
+<text x="176" y="438" font-size="27" font-weight="500" fill="#FFFFFF">headphones under</text>
+<text x="176" y="478" font-size="27" font-weight="700" fill="#FFFFFF">&#8377;25,000.</text>
+
+<line x1="124" y1="556" x2="460" y2="556" stroke="#1E4470" stroke-width="1.5"/>
+<text x="124" y="594" font-size="18" font-weight="700" letter-spacing="3.2" fill="#93AECB">PARSED INTENT</text>
+<g font-size="24">
+  <text x="124" y="646" font-weight="500" fill="#93AECB">Ceiling</text>
+  <text x="460" y="646" font-weight="700" fill="#C8A951" text-anchor="end">&#8377;25,000</text>
+  <text x="124" y="702" font-weight="500" fill="#93AECB">Category</text>
+  <text x="460" y="702" font-weight="600" fill="#FFFFFF" text-anchor="end">Consumer audio</text>
+  <text x="124" y="758" font-weight="500" fill="#93AECB">Signature</text>
+  <text x="460" y="758" font-weight="600" fill="#FFFFFF" text-anchor="end">Verified</text>
+</g>
+<line x1="124" y1="672" x2="460" y2="672" stroke="#1E4470" stroke-width="1" stroke-opacity="0.6"/>
+<line x1="124" y1="728" x2="460" y2="728" stroke="#1E4470" stroke-width="1" stroke-opacity="0.6"/>
+
+<!-- ===================== RIGHT PHONE : executed ===================== -->
+<g filter="url(#lift)">
+  <rect x="1408" y="200" width="440" height="660" rx="36" fill="url(#phoneBody)" stroke="#FFFFFF" stroke-opacity="0.17" stroke-width="1.5"/>
+</g>
+<rect x="1568" y="224" width="120" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.16"/>
+<rect x="1432" y="256" width="392" height="580" rx="22" fill="url(#screen)" stroke="#1E4470" stroke-width="1.5"/>
+<text x="1460" y="302" font-size="19" font-weight="700" letter-spacing="3.2" fill="#C7D8EC">MERCHANT CHECKOUT</text>
+<line x1="1460" y1="322" x2="1796" y2="322" stroke="#1E4470" stroke-width="1.5"/>
+
+<rect x="1460" y="340" width="336" height="140" rx="8" fill="#123055" stroke="#1E4470" stroke-width="1.5"/>
+<g transform="translate(1628 410) scale(3.0)" stroke="#5D86B4" stroke-width="1.5" fill="none" stroke-linecap="round">
+  <path d="M-8 2 v-2 a8 8 0 0 1 16 0 v2"/>
+  <rect x="-9.8" y="1.4" width="4.4" height="7.2" rx="2.2"/>
+  <rect x="5.4" y="1.4" width="4.4" height="7.2" rx="2.2"/>
+</g>
+
+<text x="1460" y="520" font-size="17" font-weight="700" letter-spacing="3.2" fill="#93AECB">AUDIOHAUS INDIA</text>
+<text x="1460" y="558" font-size="23" font-weight="700" fill="#FFFFFF">Studio Pro Headphones</text>
+<text x="1460" y="590" font-size="21" font-weight="500" fill="#93AECB">Studio equipment  &#183;  Qty 1</text>
+<line x1="1460" y1="614" x2="1796" y2="614" stroke="#1E4470" stroke-width="1.5"/>
+<text x="1460" y="648" font-size="18" font-weight="700" letter-spacing="3.2" fill="#93AECB">ORDER TOTAL</text>
+<text x="1460" y="706" font-size="62" font-weight="800" fill="#C8A951">&#8377;42,000</text>
+
+<rect x="1460" y="728" width="336" height="52" rx="6" fill="#E0645A" fill-opacity="0.13" stroke="#E0645A" stroke-opacity="0.6" stroke-width="1.5"/>
+<g transform="translate(1486 743) scale(0.9)" stroke="#EE8A82" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M10.3 3.6 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0z"/>
+  <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="16.6" x2="12.01" y2="16.6"/>
+</g>
+<text x="1518" y="761" font-size="17" font-weight="700" letter-spacing="2" fill="#F09A93">EXCEEDS INTENT LIMIT</text>
+
+<line x1="1460" y1="800" x2="1796" y2="800" stroke="#1E4470" stroke-width="1.5"/>
+<text x="1460" y="826" font-size="20" font-weight="500" fill="#93AECB">Agent</text>
+<text x="1796" y="826" font-size="20" font-weight="600" fill="#C7D8EC" text-anchor="end">ShopBot-A7</text>
+
+<!-- ===================== CENTER : three states ===================== -->
+<!-- state 1 -->
+<g filter="url(#softlift)">
+  <rect x="560" y="200" width="800" height="200" rx="8" fill="url(#card)" stroke="#1E4470" stroke-width="1.5"/>
+</g>
+<rect x="600" y="264" width="72" height="72" rx="8" fill="#E0645A" fill-opacity="0.16" stroke="#E0645A" stroke-opacity="0.65" stroke-width="1.5"/>
+<g transform="translate(618 282) scale(1.5)" stroke="#EE8A82" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M10.3 3.6 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0z"/>
+  <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="16.6" x2="12.01" y2="16.6"/>
+</g>
+<text x="700" y="264" font-size="18" font-weight="700" letter-spacing="3.4" fill="#93AECB">STATE 01</text>
+<text x="700" y="308" font-size="25" font-weight="700" letter-spacing="0.6" fill="#FFFFFF">INTENT DEVIATION DETECTED</text>
+<text x="700" y="346" font-size="21" font-weight="500" fill="#93AECB">68% over the stated ceiling  &#183;  category mismatch</text>
+<g transform="translate(948 408)" stroke="#2C5688" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="0,0 12,12 24,0"/>
+</g>
+
+<!-- state 2 -->
+<g filter="url(#softlift)">
+  <rect x="560" y="430" width="800" height="200" rx="8" fill="url(#card)" stroke="#1E4470" stroke-width="1.5"/>
+</g>
+<rect x="600" y="494" width="72" height="72" rx="8" fill="#016FD0" fill-opacity="0.18" stroke="#016FD0" stroke-opacity="0.75" stroke-width="1.5"/>
+<g transform="translate(618 512) scale(1.5)" stroke="#4EA5F0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 2.6 4 6v6c0 4.7 3.4 8.3 8 9.4 4.6-1.1 8-4.7 8-9.4V6l-8-3.4z"/>
+  <polyline points="9,12 11.2,14.2 15.2,10.2"/>
+</g>
+<text x="700" y="494" font-size="18" font-weight="700" letter-spacing="3.4" fill="#93AECB">STATE 02</text>
+<text x="700" y="538" font-size="25" font-weight="700" letter-spacing="0.6" fill="#FFFFFF">AGENT PURCHASE PROTECTION TRIGGERED</text>
+<text x="700" y="576" font-size="21" font-weight="500" fill="#93AECB">Card Member liability set to zero, before settlement</text>
+<g transform="translate(948 638)" stroke="#2C5688" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="0,0 12,12 24,0"/>
+</g>
+
+<!-- state 3 -->
+<g filter="url(#softlift)">
+  <rect x="560" y="660" width="800" height="200" rx="8" fill="url(#cardGold)" stroke="#C8A951" stroke-width="2"/>
+</g>
+<rect x="600" y="724" width="72" height="72" rx="8" fill="#C8A951" fill-opacity="0.18" stroke="#C8A951" stroke-opacity="0.8" stroke-width="1.5"/>
+<g transform="translate(618 742) scale(1.5)" stroke="#C8A951" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M14 2H6.5A1.5 1.5 0 0 0 5 3.5v17A1.5 1.5 0 0 0 6.5 22h11a1.5 1.5 0 0 0 1.5-1.5V7l-5-5z"/>
+  <polyline points="14,2 14,7 19,7"/>
+  <line x1="8.5" y1="12.5" x2="15.5" y2="12.5"/>
+  <line x1="8.5" y1="16.5" x2="13.5" y2="16.5"/>
+</g>
+<rect x="1096" y="686" width="252" height="52" rx="8" fill="#C8A951" fill-opacity="0.06" stroke="#C8A951" stroke-opacity="0.28" stroke-width="6"/>
+<rect x="1102" y="692" width="240" height="40" rx="6" fill="#C8A951" fill-opacity="0.20" stroke="#C8A951" stroke-width="1.5"/>
+<text x="1222" y="719" font-size="16" font-weight="800" letter-spacing="2.4" fill="#C8A951" text-anchor="middle">INVESTIGATION ENGINE</text>
+<text x="700" y="724" font-size="18" font-weight="700" letter-spacing="3.4" fill="#C8A951">STATE 03</text>
+<text x="700" y="768" font-size="25" font-weight="700" letter-spacing="0.6" fill="#C8A951">CLAIMS PACKAGE ASSEMBLED</text>
+<text x="700" y="806" font-size="21" font-weight="500" fill="#C7D8EC">Intent  &#183;  cart  &#183;  merchant  &#183;  decision trail</text>
+
+<!-- ===================== bottom band ===================== -->
+<rect x="72" y="890" width="1776" height="150" rx="8" fill="#0D2440" stroke="#1E4470" stroke-width="1.5"/>
+
+<text x="112" y="930" font-size="17" font-weight="700" letter-spacing="3.4" fill="#93AECB">ENFORCEMENT TIMELINE</text>
+
+<rect x="152" y="998.5" width="928" height="3" rx="1.5" fill="url(#track)"/>
+<g font-size="17" text-anchor="middle">
+  <text x="152"  y="982" font-weight="600" fill="#C7D8EC">Intent captured</text>
+  <text x="384"  y="982" font-weight="600" fill="#C7D8EC">Agent checkout</text>
+  <text x="616"  y="982" font-weight="600" fill="#C7D8EC">Deviation scored</text>
+  <text x="848"  y="982" font-weight="600" fill="#C7D8EC">Declined &amp; capped</text>
+  <text x="1080" y="982" font-weight="700" fill="#C8A951">Claims Package filed</text>
+</g>
+<g font-size="17" text-anchor="middle" font-weight="600">
+  <text x="152"  y="1028" fill="#93AECB">t0</text>
+  <text x="384"  y="1028" fill="#93AECB">+1.2s</text>
+  <text x="616"  y="1028" fill="#93AECB">+8ms</text>
+  <text x="848"  y="1028" fill="#93AECB">+3ms</text>
+  <text x="1080" y="1028" fill="#C8A951">+0.4s</text>
+</g>
+<g>
+  <circle cx="152"  cy="1000" r="8" fill="#0A1E38" stroke="#016FD0" stroke-width="3"/>
+  <circle cx="384"  cy="1000" r="8" fill="#0A1E38" stroke="#016FD0" stroke-width="3"/>
+  <circle cx="616"  cy="1000" r="8" fill="#0A1E38" stroke="#016FD0" stroke-width="3"/>
+  <circle cx="848"  cy="1000" r="8" fill="#0A1E38" stroke="#4E8FD0" stroke-width="3"/>
+  <circle cx="1080" cy="1000" r="16" fill="#C8A951" fill-opacity="0.18"/>
+  <circle cx="1080" cy="1000" r="9" fill="#C8A951" stroke="#C8A951" stroke-width="3"/>
+</g>
+
+<line x1="1220" y1="928" x2="1220" y2="1004" stroke="#1E4470" stroke-width="1.5"/>
+<text x="1256" y="956" font-size="17" font-weight="700" letter-spacing="3.4" fill="#93AECB">RESOLUTION</text>
+<text x="1256" y="1008" font-size="44" font-weight="800" fill="#C8A951">2.3s</text>
+
+<rect x="1440" y="924" width="392" height="86" rx="6" fill="#C8A951" fill-opacity="0.09" stroke="#C8A951" stroke-opacity="0.55" stroke-width="1.5"/>
+<g transform="translate(1466 946) scale(1.25)" stroke="#C8A951" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="12" y1="3" x2="12" y2="19"/><polyline points="5,13 12,20 19,13"/>
+</g>
+<text x="1512" y="958" font-size="15" font-weight="700" letter-spacing="2" fill="#C8A951">NEW AGENT EXPOSURE LIMIT</text>
+<text x="1512" y="996" font-size="30" font-weight="800" fill="#FFFFFF">&#8377;15,000</text>
+<text x="1690" y="996" font-size="19" font-weight="600" fill="#7E97B5">&#8377;50,000</text>
+<line x1="1688" y1="990" x2="1778" y2="990" stroke="#7E97B5" stroke-width="1.8"/>
+</svg>

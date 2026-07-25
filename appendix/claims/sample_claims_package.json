@@ -1,0 +1,87 @@
+{
+  "claim_id": "CLM-2026-0042",
+  "case_reference": "SUR-2026-04817",
+  "agent_id": "shop-bot-7",
+  "card_member_intent": "Buy noise-cancelling headphones under ₹25,000",
+  "timestamp": "2026-04-22T09:41:07.412Z",
+  "resolution_time_seconds": 2.3,
+  "cart_context": {
+    "merchant": "SoundPro Audio",
+    "items": ["Studio Pro Headphones"],
+    "category": "Electronics",
+    "requested_amount": 25000,
+    "actual_amount": 42000,
+    "currency": "INR",
+    "overage_amount": 17000,
+    "overage_percent": 68.0
+  },
+  "risk_assessment": {
+    "risk_score_scale": "0.00 - 1.00 (0 = safest, 1 = riskiest)",
+    "risk_score_before": 0.42,
+    "risk_score_after": 0.78,
+    "risk_score_delta": 0.36,
+    "decline_threshold": 0.65,
+    "risk_tier_before": "Silver",
+    "risk_tier_after": "Bronze",
+    "evaluation_latency_ms": 6.4,
+    "drivers": [
+      {
+        "feature": "intent_deviation",
+        "contribution": 0.20,
+        "detail": "Transaction 68% above the ₹25,000 ceiling stated by the Card Member"
+      },
+      {
+        "feature": "amount_anomaly",
+        "contribution": 0.10,
+        "detail": "7.9 standard deviations above this agent's 30-day spend baseline"
+      },
+      {
+        "feature": "merchant_entropy",
+        "contribution": 0.06,
+        "detail": "4 distinct merchant categories across the last 5 transactions"
+      }
+    ]
+  },
+  "policy_decision": "DENIED",
+  "decision_reason": "Transaction ₹42,000 exceeds Bronze per-transaction exposure limit ₹15,000 (score 0.78, threshold 0.65)",
+  "policy_version": "surety.enforcement/v4.2",
+  "enforcement_actions": [
+    "TRANSACTION_DECLINED",
+    "AGENT_PURCHASE_PROTECTION_TRIGGERED",
+    "EXPOSURE_LIMIT_TIGHTENED",
+    "CLAIMS_PACKAGE_GENERATED"
+  ],
+  "exposure_limit_before": 25000,
+  "exposure_limit_after": 15000,
+  "counterfactuals": [
+    {
+      "condition": "Amount ₹23,000",
+      "score": 0.48,
+      "tier": "Silver",
+      "result": "ALLOWED"
+    },
+    {
+      "condition": "Amount ₹42,000 with single category history",
+      "score": 0.58,
+      "tier": "Silver",
+      "result": "ALLOWED (flagged)"
+    },
+    {
+      "condition": "Amount ₹42,000 with four category history",
+      "score": 0.71,
+      "tier": "Bronze",
+      "result": "DECLINED"
+    }
+  ],
+  "evidence_sources": [
+    "authenticated_card_member_intent",
+    "cart_context_snapshot",
+    "merchant_authorisation_request",
+    "agent_decision_trail"
+  ],
+  "chargeback_reason_code": "P07",
+  "card_member_liability": 0,
+  "audit_hash": "9f2c1b7ae4d83506c1a45f8e2b0d97341ac6e5f0928bd473615a8c2ef70b94d1",
+  "previous_audit_hash": "4b81d0e6c39a75f2184e0bd57ca3629f8071e4ab5d6c92f30e18a74bc5d20369",
+  "audit_chain_status": "VERIFIED"
+}

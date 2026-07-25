@@ -1,0 +1,67 @@
+SURETY CERTIFIED AGENT PROGRAM
+Business Brief - CodeStreet 2026
+
+
+OVERVIEW
+
+SURETY Certified is a trust-tier program for AI agent developers building on the
+Amex ACE Developer Kit. Every registered agent already carries a continuous risk
+score. The program makes that score visible and rewards developers who keep it
+low, turning compliance from an obligation into a competitive advantage.
+
+
+TIER STRUCTURE
+
+Tier      Risk score (0-100)   Standing
+Gold      0 - 30               Lowest risk. Widest exposure limits.
+Silver    31 - 65              Moderate risk. Standard limits.
+Bronze    66 - 100             Elevated risk. Tight caps, entry level.
+
+Tiers are recalculated continuously from live behaviour: intent deviation,
+amount anomaly, merchant entropy, category consistency and velocity.
+
+
+QUALIFICATION
+
+An agent must hold its tier for 90 consecutive days to be certified at that
+level. A single sustained breach resets the clock. Certification is a record of
+behaviour over time, not a one-off assessment.
+
+
+BENEFITS
+
+Gold      Highest default per-transaction and per-window exposure limits.
+          Reduced authentication friction at checkout. A visible "SURETY
+          Certified" badge displayed to Card Members at the point of purchase.
+
+Silver    Moderate default limits. Standard authentication. No badge.
+
+Bronze    Entry-level limits with tight per-transaction caps. Agents begin here
+          and earn their way up.
+
+
+VALUE FOR DEVELOPERS
+
+Higher tiers mean fewer declined transactions and fewer step-up authentication
+prompts, which means faster checkouts and less abandonment. The badge is a
+public signal of reliability that competing agents cannot claim without earning
+it. Good governance stops being a cost of doing business and becomes a reason
+Card Members choose one agent over another.
+
+
+VALUE FOR AMERICAN EXPRESS
+
+Recurring certification fees create a new revenue line attached to the agent
+developer ecosystem rather than to transaction volume alone. Tighter caps on
+lower-tier agents reduce fraud and dispute losses, making Agent Purchase
+Protection actuarially sustainable. And the program compounds: as more
+developers seek certification to reduce friction, Amex sees more agent
+behaviour, which improves the underwriting model, which makes the tiers more
+valuable to hold. The closed-loop network makes this defensible - an issuer or
+a processor alone cannot observe both sides of the transaction.
+
+
+NEXT STEPS
+
+Round 2 will demonstrate tier assignment, live tier changes and their immediate
+effect on exposure limits against a 50-agent simulated fleet.

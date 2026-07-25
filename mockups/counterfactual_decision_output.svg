@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="800" viewBox="0 0 1920 800" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+   <stop offset="0" stop-color="#0C2242"/><stop offset="1" stop-color="#08182D"/></linearGradient>
+ <linearGradient id="cardG" x1="0" y1="0" x2="0" y2="1">
+   <stop offset="0" stop-color="#12304F"/><stop offset="1" stop-color="#0A2140"/></linearGradient>
+ <filter id="lift" x="-25%" y="-25%" width="150%" height="160%">
+   <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#020A14" flood-opacity="0.62"/></filter>
+</defs>
+<rect width="1920" height="800" fill="url(#bg)"/>
+<g filter="url(#lift)"><rect x="60" y="66" width="600" height="668" rx="8" fill="url(#cardG)" stroke="#C8A951" stroke-width="2"/></g>
+<text x="100" y="122" font-size="19" font-weight="700" letter-spacing="3.2" fill="#C8A951">DECISION RECORD</text>
+<rect x="100" y="150" width="300" height="82" rx="6" fill="#E0645A" fill-opacity="0.14" stroke="#E0645A" stroke-width="2.5"/>
+<text x="250" y="206" font-size="46" font-weight="800" letter-spacing="3" fill="#E0645A" text-anchor="middle">DECLINED</text>
+<text x="100" y="300" font-size="23" font-weight="500" fill="#93AECB">Agent</text>
+<text x="620" y="300" font-size="23" font-weight="700" fill="#FFFFFF" text-anchor="end">shop-bot-7</text>
+<line x1="100" y1="322" x2="620" y2="322" stroke="#1E4470" stroke-width="1.2"/>
+<text x="100" y="364" font-size="23" font-weight="500" fill="#93AECB">Transaction</text>
+<text x="620" y="364" font-size="23" font-weight="700" fill="#C8A951" text-anchor="end">&#8377;42,000</text>
+<line x1="100" y1="386" x2="620" y2="386" stroke="#1E4470" stroke-width="1.2"/>
+<text x="100" y="428" font-size="23" font-weight="500" fill="#93AECB">Risk score before</text>
+<text x="620" y="428" font-size="23" font-weight="700" fill="#FFFFFF" text-anchor="end">0.42  (Silver)</text>
+<line x1="100" y1="450" x2="620" y2="450" stroke="#1E4470" stroke-width="1.2"/>
+<text x="100" y="492" font-size="23" font-weight="500" fill="#93AECB">Risk score after</text>
+<text x="620" y="492" font-size="23" font-weight="700" fill="#C8A951" text-anchor="end">0.78  (Bronze)</text>
+<line x1="100" y1="514" x2="620" y2="514" stroke="#1E4470" stroke-width="1.2"/>
+<text x="100" y="556" font-size="23" font-weight="500" fill="#93AECB">Decline threshold</text>
+<text x="620" y="556" font-size="23" font-weight="700" fill="#FFFFFF" text-anchor="end">0.65</text>
+<line x1="100" y1="578" x2="620" y2="578" stroke="#1E4470" stroke-width="1.2"/>
+<text x="100" y="620" font-size="23" font-weight="500" fill="#93AECB">Exposure limit</text>
+<text x="620" y="620" font-size="23" font-weight="700" fill="#C8A951" text-anchor="end">&#8377;25,000 &#8594; &#8377;15,000</text>
+<text x="100" y="698" font-size="18" font-weight="500" fill="#7E97B5">Replayable with the exact model and policy version.</text>
+<g filter="url(#lift)"><rect x="700" y="66" width="1160" height="668" rx="8" fill="#050E1C" stroke="#1E4470" stroke-width="1.5"/></g>
+<rect x="700" y="66" width="1160" height="46" rx="8" fill="#0A1A2E"/>
+<rect x="700" y="92" width="1160" height="20" fill="#0A1A2E"/>
+<circle cx="728" cy="89" r="7" fill="#E0645A" fill-opacity="0.75"/>
+<circle cx="754" cy="89" r="7" fill="#E5AE5C" fill-opacity="0.75"/>
+<circle cx="780" cy="89" r="7" fill="#5EC494" fill-opacity="0.75"/>
+<text x="816" y="95" font-size="17" font-weight="700" letter-spacing="2.4" fill="#93AECB">surety &#183; decision output &#183; case SUR-2026-04817</text>
+<line x1="700" y1="112" x2="1860" y2="112" stroke="#1E4470" stroke-width="1.2"/>
+<text x="736" y="162" font-family="Consolas, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="22" font-weight="700" fill="#C7D8EC" xml:space="preserve">DECISION: <tspan fill="#E0645A" font-weight="700">DECLINE</tspan></text>
+<text x="736" y="202" font-family="Consolas, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="22" font-weight="500" fill="#C7D8EC" xml:space="preserve">Agent:       shop-bot-7</text>
+<text x="736" y="242" font-family="Consolas, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="22" font-weight="500" fill="#C7D8EC" xml:space="preserve">Transaction: <tspan fill="#C8A951" font-weight="700">&#8377;42,000</tspan> headphones</text>
+<text x="736" y="282" font-family="Consolas, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="22" font-weight="500" fill="#C7D8EC" xml:space="preserve">Risk Score:  <tspan fill="#C8A951" font-weight="700">0.78</tspan>  (Threshold: 0.65, was 0.42)</text>
+<text x="736" y="336" font-family="Consolas, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="22" font-weight="700" fill="#93AECB" xml:space="preserve">DRIVERS:</text>
+<text x="770" y="376" font-family="Consolas, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="22" font-weight="500" fill="#C7D8EC" xml:space="preserve">+0.20  intent deviation   (68% over &#8377;25,000 limit)</text>
+<text x="770" y="416" font-family="Consolas, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="22" font-weight="500" fill="#C7D8EC" xml:space="preserve">+0.10  amount anomaly     (7.9&#963; above baseline)</text>
+<text x="770" y="456" font-family="Consolas, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="22" font-weight="500" fill="#C7D8EC" xml:space="preserve">+0.06  merchant entropy   (4 categories in 5 txs)</text>
+<text x="736" y="510" font-family="Consolas, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="22" font-weight="700" fill="#93AECB" xml:space="preserve">COUNTERFACTUAL:</text>
+<text x="770" y="550" font-family="Consolas, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="22" font-weight="500" fill="#C7D8EC" xml:space="preserve">At &#8377;23,000:  score = 0.48 &#8594; <tspan fill="#5EC494" font-weight="700">ALLOWED</tspan>  (Silver tier)</text>
+<text x="770" y="590" font-family="Consolas, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="22" font-weight="500" fill="#C7D8EC" xml:space="preserve">At &#8377;42,000, 1 category:  score = 0.58 &#8594; <tspan fill="#E5AE5C" font-weight="700">ALLOWED</tspan>  (Silver, flagged)</text>
+<text x="770" y="630" font-family="Consolas, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="22" font-weight="500" fill="#C7D8EC" xml:space="preserve">At &#8377;42,000, 4 categories: score = 0.71 &#8594; <tspan fill="#E0645A" font-weight="700">DECLINED</tspan> (Bronze tier)</text>
+<line x1="736" y1="672" x2="1824" y2="672" stroke="#1E4470" stroke-width="1.2"/>
+<text x="736" y="708" font-size="19" font-weight="600" fill="#C7D8EC">Drivers and counterfactuals are emitted with every decision, not reconstructed after the fact.</text>
+</svg>
