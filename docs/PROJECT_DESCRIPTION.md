@@ -45,6 +45,7 @@ Every automated decision is explainable and reversible by a **human operator**, 
 - Audit logging is asynchronous: enforcement targets under 10ms while every decision is written to a hash-chained PostgreSQL ledger (each record stores the prior hash; tampering provable).
 - On breach, SURETY auto-assembles the Claims Package; React console updates over WebSockets.
 - Design aligns with the NIST AI RMF (Govern/Manage).
+- **Live prototype.** A working policy service is deployed at https://surety-policy-service.onrender.com/ : browser console, OpenAPI docs, POST /evaluate with the expected-loss working returned on every decision, POST /breaker for agent, class and fleet emergency stops, and a hash-chained audit ledger with a live /audit/verify integrity check.
 - **Prototype Scope.** The Round 2 MVP implements a deterministic risk-scoring engine with 3 scripted agent personas, FastAPI enforcement with Redis token buckets, PostgreSQL hash-chained audit, and a React dashboard. XGBoost is trained and validated offline on synthetic data as a production extension path. The 50-agent fleet, Kafka streaming, and sub-10ms p99 targets are the validated design architecture; measured results will be reported from the Round 2 prototype.
 - All training and simulation data is disclosed and synthetic; features transfer to production signals.
 

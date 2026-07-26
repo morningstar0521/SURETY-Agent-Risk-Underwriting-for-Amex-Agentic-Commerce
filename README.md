@@ -10,7 +10,8 @@ Every other governance proposal builds a fence. SURETY builds the actuarial laye
 
 SURETY scores every registered AI agent continuously, converts that score into dynamic exposure caps, circuit-breaks agents that breach their terms, and assembles claims-grade evidence for every breach. It is the credit score for autonomous agents.
 
-**There is a running prototype in [`prototype/`](prototype/).** Two commands and you have the policy engine and console on localhost.
+**Live prototype: <https://surety-policy-service.onrender.com/>**
+Browser console at `/`, OpenAPI docs at `/docs`, health at `/health`. Free tier, so the first request may take ~30 s to wake the instance. Source in [`prototype/`](prototype/) — two commands to run it locally.
 
 ---
 
@@ -37,22 +38,27 @@ The Claims Package is the signature capability: it is the investigation engine t
 
 ## Run the prototype
 
+It is already deployed — no setup needed:
+
+| URL | What |
+|---|---|
+| <https://surety-policy-service.onrender.com/> | Policy console (browser UI) |
+| <https://surety-policy-service.onrender.com/docs> | Interactive OpenAPI docs |
+| <https://surety-policy-service.onrender.com/health> | Liveness and policy thresholds |
+| <https://surety-policy-service.onrender.com/audit/verify> | Hash-chain integrity check |
+
+Or run it locally:
+
 ```bash
 cd prototype
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-| URL | What |
-|---|---|
-| <http://127.0.0.1:8000> | Policy console (browser UI) |
-| <http://127.0.0.1:8000/docs> | Interactive OpenAPI docs |
-| <http://127.0.0.1:8000/audit/verify> | Hash-chain integrity check |
-
-The demo scenario, as a single call:
+The demo scenario, as a single call against the live service:
 
 ```bash
-curl -s -X POST http://127.0.0.1:8000/evaluate \
+curl -s -X POST https://surety-policy-service.onrender.com/evaluate \
   -H 'Content-Type: application/json' \
   -d '{"agent_id":"shop-bot-7","transaction_amount":42000,"exposure_limit":15000,"risk_score":0.78,"risk_tier":"BRONZE"}'
 ```
@@ -69,7 +75,7 @@ curl -s -X POST http://127.0.0.1:8000/evaluate \
 }
 ```
 
-`python test_client.py` exercises all four decision paths, checks that an invalid score is rejected, and verifies the audit chain. Full details in [`prototype/README.md`](prototype/README.md).
+`python test_client.py` exercises all four decision paths and all three breaker scopes, checks that an invalid score is rejected, and verifies the audit chain. `./breaker_demo.sh` walks the emergency stop end to end. Both accept `BASE=https://surety-policy-service.onrender.com` to run against the live service. Full details in [`prototype/README.md`](prototype/README.md).
 
 **Deploy it:** a Render blueprint is committed at [`render.yaml`](render.yaml) and a Dockerfile at [`prototype/Dockerfile`](prototype/Dockerfile). See [`prototype/DEPLOY.md`](prototype/DEPLOY.md) for Render, Railway, Fly.io, Hugging Face Spaces and plain Docker.
 
@@ -254,6 +260,7 @@ Navy `#0B1F3A` field · Amex blue `#016FD0` for structure and data flow · gold 
 
 **Team SURETY** — CodeStreet 2026, Governance Layer for Financial Agents.
 
+- Live prototype: <https://surety-policy-service.onrender.com/>
 - Repository: <https://github.com/morningstar0521/SURETY-Agent-Risk-Underwriting-for-Amex-Agentic-Commerce>
 - Video walkthrough: `[Video Link]`
 

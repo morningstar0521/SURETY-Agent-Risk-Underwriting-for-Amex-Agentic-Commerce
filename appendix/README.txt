@@ -27,8 +27,29 @@ Rs 25,000; the agent attempts a Rs 42,000 studio headphone purchase; SURETY
 detects the intent deviation in-flight and resolves the claim in 2.3 seconds.
 
 --------------------------------------------------------------------------------
+LIVE DEMO
+--------------------------------------------------------------------------------
+
+Live prototype: https://surety-policy-service.onrender.com/
+
+    The SURETY policy engine is deployed and running at the address above.
+
+        /                browser policy console
+        /docs            interactive OpenAPI documentation
+        /health          liveness and current policy thresholds
+        /evaluate        POST, evaluate one agent transaction
+        /breaker         POST, emergency stop at agent / class / fleet scope
+        /breaker/status  GET, current breaker state
+        /audit/verify    GET, recompute the hash chain
+
+    The instance is on a free tier and sleeps after 15 minutes idle, so the
+    first request may take about 30 seconds to wake it.
+
+--------------------------------------------------------------------------------
 TABLE OF CONTENTS
 --------------------------------------------------------------------------------
+
+- Live prototype: https://surety-policy-service.onrender.com/
 
 README.txt
     This file. Index of the appendix package.

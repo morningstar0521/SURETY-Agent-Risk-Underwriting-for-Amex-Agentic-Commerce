@@ -1,5 +1,19 @@
 # SURETY — Policy Evaluation Service
 
+## Deployed URL
+
+**<https://surety-policy-service.onrender.com/>**
+
+The SURETY policy engine is deployed and running at the above URL. See curl examples below. Substitute the deployed host for `http://127.0.0.1:8000` in any example, or export it once:
+
+```bash
+export BASE=https://surety-policy-service.onrender.com
+```
+
+Free-tier instances sleep after 15 minutes idle, so the first request may take about 30 seconds. Warm it up before a demo.
+
+---
+
 A minimal, self-contained FastAPI service implementing the SURETY enforcement logic, plus a browser console for driving it.
 
 No Open Policy Agent dependency: the Rego rules in [`../appendix/policies/sample_opa_policy.rego`](../appendix/policies/sample_opa_policy.rego) are mirrored in Python so the service runs with nothing but FastAPI and uvicorn.
