@@ -22,6 +22,8 @@ SURETY does not just police agents: **it underwrites the agent before it acts, c
 
 On any breach, SURETY auto-assembles a **Claims Package**: authenticated intent, cart context, merchant data, transaction, decision trail, and score adjustment, aligned to Amex Chargeback reason codes. The Claims Package is not an afterthought - it is the investigation engine that turns the protection promise from manual inquiry into closed-loop, evidence-backed resolution.
 
+Every automated decision is explainable and reversible by a **human operator**, ensuring SURETY accelerates governance without removing accountability.
+
 ## 3. Rubric Task Mapping
 
 | # | Rubric task | SURETY implementation |
@@ -37,6 +39,7 @@ On any breach, SURETY auto-assembles a **Claims Package**: authenticated intent,
 - Agent actions stream through Kafka into a feature extractor: intent deviation, baseline amount deviation, merchant-category entropy, velocity, decline/dispute history, time-pattern drift.
 - SURETY ingests Intent Intelligence and Cart Context signals from the ACE kit as core features, and writes per-agent policy decisions back to the Agent Registration service: a closed governance loop in Amex's agentic architecture.
 - An XGBoost model outputs the risk score on a 0.00-1.00 scale with explained feature contributions (e.g., intent deviation +0.20, amount anomaly +0.10), keeping every score auditable and its drivers clear to operators and regulators.
+- The risk score is converted into an actuarial underwriting decision through an expected-loss model: Expected Loss = P(breach | score) × mean severity. The per-transaction exposure cap is derived from this expected loss and the agent's tier loss budget, ensuring the cap is not asserted but computed. For instance, a score of 0.71 with breach probability 0.15 and severity ₹80,000 gives an expected loss of ₹12,000, grounding the Bronze cap of ₹15,000.
 - Scores map deterministically to tiers, limits, and permissions.
 - A stateless FastAPI + Open Policy Agent path with Redis token buckets enforces terms in real time; allow/block/escalate decisions target sub-10ms at 10,000-agent scale.
 - Audit logging is asynchronous: enforcement targets under 10ms while every decision is written to a hash-chained PostgreSQL ledger (each record stores the prior hash; tampering provable).

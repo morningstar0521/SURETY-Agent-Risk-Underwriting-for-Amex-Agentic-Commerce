@@ -1,0 +1,20 @@
+# Render.com blueprint - free tier deploy for the SURETY policy service.
+#
+#   1. Push this repository to GitHub.
+#   2. Go to https://dashboard.render.com/blueprints and click "New Blueprint Instance".
+#   3. Point it at the repo. Render reads this file and deploys automatically.
+#
+# The free instance sleeps after 15 minutes of inactivity and takes ~30 seconds
+# to wake. Warm it up before a demo.
+
+services:
+  - type: web
+    name: surety-policy-service
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: prototype
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true

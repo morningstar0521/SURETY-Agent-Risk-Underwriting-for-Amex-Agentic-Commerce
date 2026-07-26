@@ -75,8 +75,10 @@ NOTES
 2.  Video walkthrough:  [Video Link]
     A short narrated run through the demo scenario end to end.
 
-3.  Source repository:  [GitHub Link]
-    Prototype code, policy bundle, feature extractor and simulation harness.
+3.  Source repository:
+    https://github.com/morningstar0521/SURETY-Agent-Risk-Underwriting-for-Amex-Agentic-Commerce
+    Submission artefacts; prototype code, policy bundle, feature extractor
+    and simulation harness to follow in Round 2.
 
 4.  Currency figures are written as "Rs" in plain-text files and as the rupee
     symbol in the deck and mockups. Both refer to Indian Rupees.

@@ -10,6 +10,8 @@ Every other governance proposal builds a fence. SURETY builds the actuarial laye
 
 SURETY scores every registered AI agent continuously, converts that score into dynamic exposure caps, circuit-breaks agents that breach their terms, and assembles claims-grade evidence for every breach. It is the credit score for autonomous agents.
 
+**There is a running prototype in [`prototype/`](prototype/).** Two commands and you have the policy engine and console on localhost.
+
 ---
 
 ## The problem
@@ -33,6 +35,63 @@ The Claims Package is the signature capability: it is the investigation engine t
 
 ---
 
+## Run the prototype
+
+```bash
+cd prototype
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+| URL | What |
+|---|---|
+| <http://127.0.0.1:8000> | Policy console (browser UI) |
+| <http://127.0.0.1:8000/docs> | Interactive OpenAPI docs |
+| <http://127.0.0.1:8000/audit/verify> | Hash-chain integrity check |
+
+The demo scenario, as a single call:
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/evaluate \
+  -H 'Content-Type: application/json' \
+  -d '{"agent_id":"shop-bot-7","transaction_amount":42000,"exposure_limit":15000,"risk_score":0.78,"risk_tier":"BRONZE"}'
+```
+
+```json
+{
+  "decision": "DENY",
+  "reason": "Transaction Rs 42,000 exceeds Bronze per-transaction exposure limit Rs 15,000 (score 0.78, threshold 0.65). Excess Rs 27,000.",
+  "breach_probability": 0.1825,
+  "expected_loss_inr": 14600.0,
+  "derived_cap_inr": 18000,
+  "audit_hash": "f9298628fd67d58f...",
+  "previous_hash": "0000000000000000..."
+}
+```
+
+`python test_client.py` exercises all four decision paths, checks that an invalid score is rejected, and verifies the audit chain. Full details in [`prototype/README.md`](prototype/README.md).
+
+**Deploy it:** a Render blueprint is committed at [`render.yaml`](render.yaml) and a Dockerfile at [`prototype/Dockerfile`](prototype/Dockerfile). See [`prototype/DEPLOY.md`](prototype/DEPLOY.md) for Render, Railway, Fly.io, Hugging Face Spaces and plain Docker.
+
+---
+
+## How the cap is computed
+
+The exposure cap is derived, not asserted:
+
+```
+P(breach | score) = 0.30 × score²           convex in the score
+Expected Loss     = P(breach) × ₹80,000     mean breach severity
+Derived cap       = Expected Loss × tier loss budget
+                    Gold 3.00 · Silver 2.00 · Bronze 1.25 · Critical 0.50
+```
+
+At score 0.71: P(breach) 0.1512 → expected loss ₹12,096 → Bronze cap **₹15,000**.
+
+The service returns this working on every decision, so an underwriter can see why the cap is what it is. `0.30` and `₹80,000` are calibration constants from a synthetic backtest, not measured production values.
+
+---
+
 ## The demo scenario
 
 A Card Member instructs their shopping agent: *"Buy noise-cancelling headphones under ₹25,000."* The agent attempts a ₹42,000 studio headphone purchase. SURETY catches the intent deviation in-flight and resolves the claim in 2.3 seconds.
@@ -41,7 +100,7 @@ A Card Member instructs their shopping agent: *"Buy noise-cancelling headphones 
 
 ### Canonical figures
 
-These numbers are consistent across the deck, the project description and every appendix artefact.
+These numbers are consistent across the deck, the project description, the prototype and every appendix artefact.
 
 | Field | Value |
 |---|---|
@@ -51,8 +110,8 @@ These numbers are consistent across the deck, the project description and every 
 | Risk score before | 0.42 (Silver tier) |
 | Risk score after | 0.78 (Bronze tier) |
 | Decline threshold | 0.65 |
+| Escalation threshold | 0.90 |
 | Exposure limit | ₹25,000 → ₹15,000 |
-| Policy evaluation | 6.4 ms |
 | End-to-end resolution | 2.3 s |
 | Card Member liability | ₹0 |
 
@@ -100,9 +159,11 @@ Design target: **<10 ms p99** policy decisions at 10,000-agent scale. Aligned to
 
 ## Prototype scope
 
-The Round 2 MVP implements a deterministic risk-scoring engine with 3 scripted agent personas, FastAPI enforcement with Redis token buckets, PostgreSQL hash-chained audit, and a React dashboard. XGBoost is trained and validated offline on synthetic data as a production extension path.
+`prototype/` implements the enforcement path end to end: the decision logic, the expected-loss model, the hash-chained audit ledger with a live verify endpoint, and the operator console. The Rego policy in `appendix/policies/` is mirrored in Python so the service runs with no external Open Policy Agent.
 
-The 50-agent fleet, Kafka streaming, and sub-10 ms p99 figures are the validated design architecture. **All latency and detection numbers in this repository are design targets, not measured production results.** Measured precision, recall and p99 latency will be reported from the Round 2 prototype.
+The Round 2 MVP adds 3 scripted agent personas, Redis token buckets, a PostgreSQL-backed ledger and the React dashboard. XGBoost is trained and validated offline on synthetic data as a production extension path.
+
+The 50-agent fleet, Kafka streaming, and sub-10 ms p99 figures are the validated design architecture. **All latency and detection numbers in this repository are design targets, not measured production results** — the one exception is `evaluation_latency_ms` in each API response, which is the real measured time for that call. Measured precision, recall and p99 latency will be reported from the Round 2 prototype.
 
 All training and simulation data is synthetic and disclosed.
 
@@ -125,37 +186,36 @@ All training and simulation data is synthetic and disclosed.
 ```
 .
 ├── README.md                                  This file
+├── prototype/                                 RUNNABLE policy service + console
+│   ├── main.py                                POST /evaluate · /audit · /audit/verify
+│   ├── static/index.html                      Browser policy console
+│   ├── test_client.py                         Smoke test, all decision paths
+│   ├── Dockerfile                             Container build
+│   ├── DEPLOY.md                              Render / Railway / Fly / Docker
+│   ├── requirements.txt
+│   └── README.md                              Run instructions and curl examples
+├── render.yaml                                One-click Render blueprint
 ├── docs/
-│   └── PROJECT_DESCRIPTION.md                 Full project description (~1,070 words)
+│   └── PROJECT_DESCRIPTION.md                 Full project description
 ├── deck/
 │   ├── SURETY_Round1_Deck.pptx                11-slide Round 1 deck with speaker notes
 │   └── SURETY_Round1_Deck.pdf                 Same deck, PDF export
 ├── appendix/
 │   ├── README.txt                             Appendix index
-│   ├── policies/
-│   │   └── sample_opa_policy.rego             Dynamic exposure cap enforcement (Rego)
-│   ├── claims/
-│   │   └── sample_claims_package.json         Full Claims Package for the demo scenario
-│   ├── business/
-│   │   └── surety_certified_program.txt       SURETY Certified trust-tier brief
-│   └── mockups/
-│       ├── README.txt                         Mockup descriptions
-│       ├── demo_slide_4_claim_resolution.png
-│       ├── dashboard_operator_console.png
-│       └── appendix_a_architecture.png
+│   ├── policies/sample_opa_policy.rego        Enforcement expressed in Rego
+│   ├── claims/sample_claims_package.json      Full Claims Package for the demo scenario
+│   ├── business/surety_certified_program.txt  SURETY Certified trust-tier brief
+│   └── mockups/                               PNGs referenced by the appendix
 └── mockups/                                   Source assets (SVG + 4K PNG)
-    ├── demo_claim_resolution.svg / .png
-    ├── counterfactual_decision_output.svg / .png
-    ├── operator_console.svg / .png
-    └── appendix_a_architecture.png
 ```
 
 ### Where to start
 
-1. `deck/SURETY_Round1_Deck.pdf` — the 11-slide pitch, five minutes end to end.
-2. `docs/PROJECT_DESCRIPTION.md` — the written submission.
-3. `appendix/claims/sample_claims_package.json` — what SURETY actually emits on a breach.
-4. `appendix/policies/sample_opa_policy.rego` — how enforcement is expressed.
+1. **`prototype/`** — run it. Two commands, then open <http://127.0.0.1:8000>.
+2. `deck/SURETY_Round1_Deck.pdf` — the 11-slide pitch, five minutes end to end.
+3. `docs/PROJECT_DESCRIPTION.md` — the written submission.
+4. `appendix/claims/sample_claims_package.json` — what SURETY emits on a breach.
+5. `appendix/policies/sample_opa_policy.rego` — the same rules expressed in Rego.
 
 The PPTX carries full speaker notes on every slide, including source citations.
 
@@ -176,7 +236,7 @@ The PPTX carries full speaker notes on every slide, including source citations.
 
 ## Design system
 
-Navy `#0B1F3A` field · Amex blue `#016FD0` for structure and data flow · gold `#C8A951` reserved for money, triggers and key decisions · Inter throughout. Mockups ship as SVG for lossless reuse and 3840px PNG for direct embedding.
+Navy `#0B1F3A` field · Amex blue `#016FD0` for structure and data flow · gold `#C8A951` reserved for money, triggers and key decisions · Inter throughout. The console in `prototype/static/` uses the same tokens. Mockups ship as SVG for lossless reuse and 3840px PNG for direct embedding.
 
 ---
 
@@ -194,7 +254,8 @@ Navy `#0B1F3A` field · Amex blue `#016FD0` for structure and data flow · gold 
 
 **Team SURETY** — CodeStreet 2026, Governance Layer for Financial Agents.
 
-Video walkthrough: `[Video Link]`
+- Repository: <https://github.com/morningstar0521/SURETY-Agent-Risk-Underwriting-for-Amex-Agentic-Commerce>
+- Video walkthrough: `[Video Link]`
 
 ---
 

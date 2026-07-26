@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SURETY · Policy Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0B1F3A;
+    --navy-deep:#071528;
+    --panel:#0F2A4A;
+    --panel-2:#0D2440;
+    --hair:#1E4470;
+    --blue:#016FD0;
+    --blue-lift:#3E92DE;
+    --gold:#C8A951;
+    --white:#FFFFFF;
+    --mist:#C7D8EC;
+    --dim:#93AECB;
+    --green:#5EC494;
+    --amber:#E5AE5C;
+    --red:#E0645A;
+    --r:6px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+    background:
+      radial-gradient(1100px 620px at 50% -8%, #12304F 0%, rgba(11,31,58,0) 62%),
+      linear-gradient(180deg,#0C2242 0%, var(--navy) 46%, #08182D 100%);
+    background-attachment:fixed;
+    color:var(--white);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    font-size:16px;
+    line-height:1.55;
+  }
+  ::selection{background:rgba(200,169,81,.28)}
+
+  /* ---------- focus ---------- */
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:2px;
+  }
+
+  /* ---------- header ---------- */
+  header{
+    border-bottom:1px solid var(--hair);
+    background:rgba(7,21,40,.6);
+    backdrop-filter:blur(8px);
+    position:sticky;top:0;z-index:30;
+  }
+  .bar{
+    max-width:1240px;margin:0 auto;padding:16px 24px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand svg{flex:none}
+  .brand .name{font-size:19px;font-weight:800;letter-spacing:.2em}
+  .brand .sep{width:1px;height:22px;background:var(--hair)}
+  .brand .sub{font-size:13px;color:var(--dim);font-weight:500}
+  .pill{
+    display:inline-flex;align-items:center;gap:9px;
+    border:1px solid rgba(200,169,81,.45);border-radius:100px;
+    padding:7px 15px;background:rgba(200,169,81,.08);
+    font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--gold);
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+
+  /* ---------- layout ---------- */
+  main{max-width:1240px;margin:0 auto;padding:34px 24px 64px}
+  .lede{max-width:70ch;margin-bottom:28px}
+  .lede h1{font-size:27px;font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+  .lede p{font-size:14.5px;color:var(--mist)}
+  .grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:24px;align-items:start}
+  @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+
+  .card{
+    background:linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+    border:1px solid var(--hair);border-radius:var(--r);
+    box-shadow:0 24px 48px -28px rgba(2,10,20,.8);
+  }
+  .card.gold{border-color:rgba(200,169,81,.6)}
+  .card-head{
+    padding:18px 22px;border-bottom:1px solid var(--hair);
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+  }
+  .eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.18em;color:var(--dim)}
+  .eyebrow.gold{color:var(--gold)}
+  .card-body{padding:22px}
+
+  /* ---------- form ---------- */
+  .field{margin-bottom:17px}
+  label{display:block;font-size:12.5px;font-weight:600;color:var(--mist);margin-bottom:7px}
+  .hint{font-size:11.5px;color:var(--dim);font-weight:400;margin-top:6px}
+  input,select{
+    width:100%;min-height:44px;padding:11px 13px;
+    background:var(--navy-deep);color:var(--white);
+    border:1px solid var(--hair);border-radius:var(--r);
+    font-family:inherit;font-size:15px;font-weight:500;
+    transition:border-color .18s ease, background-color .18s ease;
+  }
+  input:hover,select:hover{border-color:#2C5688}
+  input:focus,select:focus{border-color:var(--blue);background:#081C33}
+  select{cursor:pointer;appearance:none;
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2393AECB' stroke-width='2'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 13px center;padding-right:38px;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+  .slider-row{display:flex;align-items:center;gap:14px}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;height:5px;min-height:5px;padding:0;
+    background:linear-gradient(90deg,var(--green) 0%,var(--amber) 62%,var(--red) 100%);
+    border:none;border-radius:100px;cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+    background:var(--white);border:3px solid var(--blue);cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.45);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:20px;height:20px;border-radius:50%;background:var(--white);
+    border:3px solid var(--blue);cursor:pointer;
+  }
+  .score-out{
+    font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:600;
+    color:var(--gold);min-width:56px;text-align:right;font-variant-numeric:tabular-nums;
+  }
+
+  button{
+    width:100%;min-height:48px;margin-top:6px;
+    background:var(--blue);color:var(--white);
+    border:1px solid var(--blue);border-radius:var(--r);
+    font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.03em;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
+    transition:background-color .18s ease, border-color .18s ease, color .18s ease;
+  }
+  button:hover:not(:disabled){background:#0180F0;border-color:#0180F0}
+  button:disabled{background:var(--panel);border-color:var(--hair);color:var(--dim);cursor:not-allowed}
+  .presets{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .preset{
+    flex:1 1 auto;min-height:36px;width:auto;margin:0;padding:0 12px;
+    background:transparent;border:1px solid var(--hair);color:var(--mist);
+    font-size:12px;font-weight:600;letter-spacing:.02em;
+  }
+  .preset:hover{background:rgba(1,111,208,.14);border-color:var(--blue);color:var(--white)}
+
+  /* ---------- verdict ---------- */
+  .verdict{display:flex;align-items:center;gap:16px;padding:20px 22px;border-bottom:1px solid var(--hair)}
+  .badge{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:11px 18px;border-radius:var(--r);
+    font-size:20px;font-weight:800;letter-spacing:.1em;
+  }
+  .badge.allow{background:rgba(94,196,148,.14);border:1.5px solid var(--green);color:var(--green)}
+  .badge.deny{background:rgba(224,100,90,.14);border:1.5px solid var(--red);color:var(--red)}
+  .badge.escalate{background:rgba(229,174,92,.14);border:1.5px solid var(--amber);color:var(--amber)}
+  .badge.idle{background:rgba(147,174,203,.10);border:1.5px solid var(--hair);color:var(--dim);font-size:16px;letter-spacing:.14em}
+  .verdict .meta{font-size:12.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+  .verdict .meta b{color:var(--mist);font-weight:600}
+
+  .reason{padding:18px 22px;border-bottom:1px solid var(--hair);font-size:14.5px;color:var(--mist)}
+
+  .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1px;background:var(--hair)}
+  .kv > div{background:var(--panel-2);padding:16px 22px}
+  .kv .k{font-size:10.5px;font-weight:700;letter-spacing:.14em;color:var(--dim);margin-bottom:6px}
+  .kv .v{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+  .kv .v.gold{color:var(--gold)}
+  .kv .v small{font-size:12px;font-weight:500;color:var(--dim);margin-left:6px}
+
+  .math{padding:18px 22px;border-top:1px solid var(--hair)}
+  .math .formula{
+    font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--mist);
+    background:var(--navy-deep);border:1px solid var(--hair);border-radius:var(--r);
+    padding:14px 16px;margin-top:10px;overflow-x:auto;white-space:pre;line-height:1.7;
+  }
+  .math .formula .n{color:var(--gold);font-weight:600}
+
+  pre.json{
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.65;
+    background:#050E1C;border:1px solid var(--hair);border-radius:var(--r);
+    padding:16px;overflow-x:auto;color:var(--mist);max-height:340px;
+  }
+  .hashline{
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--dim);
+    word-break:break-all;padding:14px 22px;border-top:1px solid var(--hair);
+  }
+  .hashline b{color:var(--gold);font-weight:600}
+
+  .chain{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--mist)}
+  .chain .state{font-weight:700;letter-spacing:.1em;font-size:13px}
+  .chain .state.ok{color:var(--green)}
+  .chain .state.bad{color:var(--red)}
+
+  .err{
+    margin-top:14px;padding:13px 15px;border-radius:var(--r);
+    background:rgba(224,100,90,.12);border:1px solid rgba(224,100,90,.5);
+    color:#F3A9A2;font-size:13.5px;
+  }
+  footer{
+    max-width:1240px;margin:0 auto;padding:0 24px 48px;
+    font-size:12px;color:#6B85A3;line-height:1.7;
+  }
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="18" fill="none" stroke="#C8A951" stroke-width="1.6"/>
+        <circle cx="20" cy="20" r="14" fill="none" stroke="#C8A951" stroke-width=".7"/>
+        <circle cx="9.6" cy="17.8" r="1.15" fill="#016FD0"/>
+        <circle cx="13.2" cy="12.6" r="1.15" fill="#016FD0"/>
+        <circle cx="20" cy="10.6" r="1.15" fill="#016FD0"/>
+        <circle cx="26.8" cy="12.6" r="1.15" fill="#016FD0"/>
+        <circle cx="30.4" cy="17.8" r="1.15" fill="#C8A951"/>
+        <line x1="20" y1="20" x2="27.4" y2="13.6" stroke="#C8A951" stroke-width="1.7" stroke-linecap="round"/>
+        <circle cx="20" cy="20" r="2.1" fill="#C8A951"/>
+      </svg>
+      <span class="name">SURETY</span>
+      <span class="sep" aria-hidden="true"></span>
+      <span class="sub">Policy Console &nbsp;·&nbsp; Agent Risk Underwriting</span>
+    </div>
+    <span class="pill"><i class="dot" aria-hidden="true"></i>PROTOTYPE</span>
+  </div>
+</header>
+
+<main>
+  <div class="lede">
+    <h1>Evaluate an agent transaction</h1>
+    <p>Submit an agent action against its current exposure limit and live risk score. SURETY returns the decision, the reason, the expected-loss maths behind the cap, and a hash-chained audit record.</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- ============ input ============ -->
+    <section class="card" aria-labelledby="inputs-h">
+      <div class="card-head">
+        <span class="eyebrow" id="inputs-h">TRANSACTION INPUT</span>
+      </div>
+      <div class="card-body">
+        <form id="form" novalidate>
+          <div class="field">
+            <label for="agent_id">Agent ID</label>
+            <input id="agent_id" name="agent_id" type="text" value="shop-bot-7" required autocomplete="off">
+          </div>
+
+          <div class="two">
+            <div class="field">
+              <label for="transaction_amount">Transaction amount (₹)</label>
+              <input id="transaction_amount" name="transaction_amount" type="number" min="0" step="500" value="42000" required>
+            </div>
+            <div class="field">
+              <label for="exposure_limit">Exposure limit (₹)</label>
+              <input id="exposure_limit" name="exposure_limit" type="number" min="0" step="500" value="15000" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="risk_score">Risk score <span style="font-weight:400;color:var(--dim)">(0.00 safest — 1.00 riskiest)</span></label>
+            <div class="slider-row">
+              <input id="risk_score" name="risk_score" type="range" min="0" max="1" step="0.01" value="0.78"
+                     aria-describedby="score-hint">
+              <output class="score-out" id="score_out" for="risk_score">0.78</output>
+            </div>
+            <p class="hint" id="score-hint">Decline threshold 0.65 · escalation threshold 0.90</p>
+          </div>
+
+          <div class="field">
+            <label for="risk_tier">Risk tier</label>
+            <select id="risk_tier" name="risk_tier">
+              <option value="GOLD">Gold — lowest risk, widest limits</option>
+              <option value="SILVER">Silver — moderate risk</option>
+              <option value="BRONZE" selected>Bronze — elevated risk, tight caps</option>
+              <option value="CRITICAL">Critical — escalation only</option>
+            </select>
+          </div>
+
+          <button type="submit" id="submit">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2.6 4 6v6c0 4.7 3.4 8.3 8 9.4 4.6-1.1 8-4.7 8-9.4V6l-8-3.4z"/>
+              <polyline points="9 12 11.2 14.2 15.2 10.2"/>
+            </svg>
+            <span id="submit-label">Evaluate policy</span>
+          </button>
+
+          <div class="presets" role="group" aria-label="Scenario presets">
+            <button type="button" class="preset" data-preset="deviation">Headphone deviation</button>
+            <button type="button" class="preset" data-preset="within">Within limit</button>
+            <button type="button" class="preset" data-preset="critical">Critical agent</button>
+          </div>
+
+          <div id="error" class="err" hidden role="alert"></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============ output ============ -->
+    <section class="card gold" aria-labelledby="record-h" aria-live="polite">
+      <div class="card-head">
+        <span class="eyebrow gold" id="record-h">DECISION RECORD</span>
+        <span class="chain">
+          <span>Audit chain</span>
+          <span class="state" id="chain_state">—</span>
+          <button type="button" class="preset" id="verify" style="min-height:32px;flex:0 0 auto">Verify</button>
+        </span>
+      </div>
+
+      <div class="verdict">
+        <span class="badge idle" id="badge">AWAITING INPUT</span>
+        <span class="meta" id="verdict_meta">Submit a transaction to produce a decision record.</span>
+      </div>
+
+      <p class="reason" id="reason">The reason string returned by the policy engine appears here, with the exact figures that drove the outcome.</p>
+
+      <div class="kv" id="kv">
+        <div><div class="k">RISK SCORE</div><div class="v" id="v_score">—</div></div>
+        <div><div class="k">EXPOSURE LIMIT</div><div class="v gold" id="v_limit">—</div></div>
+        <div><div class="k">EXPECTED LOSS</div><div class="v gold" id="v_el">—</div></div>
+        <div><div class="k">DERIVED CAP</div><div class="v" id="v_cap">—</div></div>
+        <div><div class="k">P(BREACH)</div><div class="v" id="v_p">—</div></div>
+        <div><div class="k">EVALUATED IN</div><div class="v" id="v_ms">—</div></div>
+      </div>
+
+      <div class="math">
+        <span class="eyebrow">HOW THE CAP IS COMPUTED</span>
+        <div class="formula" id="formula">Expected Loss = P(breach | score) × mean severity
+Derived cap   = Expected Loss × tier loss budget</div>
+      </div>
+
+      <div class="hashline">
+        <b>audit_hash</b> <span id="v_hash">—</span><br>
+        <b>previous</b> &nbsp;&nbsp;<span id="v_prev">—</span>
+      </div>
+
+      <div class="card-body" style="border-top:1px solid var(--hair)">
+        <span class="eyebrow">RAW RESPONSE</span>
+        <pre class="json" id="raw" style="margin-top:10px">// POST /evaluate response will appear here</pre>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  SURETY is a CodeStreet 2026 hackathon prototype by Team SURETY. It is not an American Express product and is not affiliated with or endorsed by American Express.
+  All figures are synthetic; latency values are design targets, not measured production results.
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var form   = document.getElementById("form");
+  var range  = document.getElementById("risk_score");
+  var out    = document.getElementById("score_out");
+  var badge  = document.getElementById("badge");
+  var errBox = document.getElementById("error");
+  var btn    = document.getElementById("submit");
+  var label  = document.getElementById("submit-label");
+
+  var PRESETS = {
+    deviation: { agent_id: "shop-bot-7", transaction_amount: 42000, exposure_limit: 15000, risk_score: 0.78, risk_tier: "BRONZE" },
+    within:    { agent_id: "shop-bot-7", transaction_amount: 23000, exposure_limit: 25000, risk_score: 0.42, risk_tier: "SILVER" },
+    critical:  { agent_id: "rogue-bot-2", transaction_amount: 9000,  exposure_limit: 15000, risk_score: 0.94, risk_tier: "CRITICAL" }
+  };
+
+  function inr(n) {
+    return "₹" + Number(n).toLocaleString("en-IN", { maximumFractionDigits: 0 });
+  }
+  function syncScore() { out.textContent = Number(range.value).toFixed(2); }
+  range.addEventListener("input", syncScore);
+  syncScore();
+
+  Array.prototype.forEach.call(document.querySelectorAll(".preset[data-preset]"), function (b) {
+    b.addEventListener("click", function () {
+      var p = PRESETS[b.getAttribute("data-preset")];
+      document.getElementById("agent_id").value = p.agent_id;
+      document.getElementById("transaction_amount").value = p.transaction_amount;
+      document.getElementById("exposure_limit").value = p.exposure_limit;
+      range.value = p.risk_score;
+      document.getElementById("risk_tier").value = p.risk_tier;
+      syncScore();
+    });
+  });
+
+  function render(d) {
+    var cls = d.decision === "ALLOW" ? "allow" : d.decision === "DENY" ? "deny" : "escalate";
+    badge.className = "badge " + cls;
+    badge.textContent = d.decision;
+
+    document.getElementById("verdict_meta").innerHTML =
+      "Agent <b>" + d.agent_id + "</b> · tier <b>" + d.risk_tier +
+      "</b> · policy <b>" + d.policy_version + "</b>";
+    document.getElementById("reason").textContent = d.reason;
+
+    document.getElementById("v_score").textContent = d.risk_score.toFixed(2);
+    document.getElementById("v_limit").textContent = inr(d.limit);
+    document.getElementById("v_el").textContent    = inr(d.expected_loss_inr);
+    document.getElementById("v_cap").textContent   = inr(d.derived_cap_inr);
+    document.getElementById("v_p").textContent     = d.breach_probability.toFixed(4);
+    document.getElementById("v_ms").innerHTML      = d.evaluation_latency_ms.toFixed(2) + "<small>ms</small>";
+
+    document.getElementById("formula").innerHTML =
+      "Expected Loss = <span class='n'>" + d.breach_probability.toFixed(4) + "</span> × <span class='n'>₹80,000</span> = <span class='n'>" + inr(d.expected_loss_inr) + "</span>\n" +
+      "Derived cap   = <span class='n'>" + inr(d.expected_loss_inr) + "</span> × " + d.risk_tier.toLowerCase() + " budget = <span class='n'>" + inr(d.derived_cap_inr) + "</span>";
+
+    document.getElementById("v_hash").textContent = d.audit_hash;
+    document.getElementById("v_prev").textContent = d.previous_hash;
+    document.getElementById("raw").textContent = JSON.stringify(d, null, 2);
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    errBox.hidden = true;
+    btn.disabled = true;
+    label.textContent = "Evaluating…";
+
+    var body = {
+      agent_id: document.getElementById("agent_id").value.trim(),
+      transaction_amount: Number(document.getElementById("transaction_amount").value),
+      exposure_limit: Number(document.getElementById("exposure_limit").value),
+      risk_score: Number(range.value),
+      risk_tier: document.getElementById("risk_tier").value
+    };
+
+    fetch("/evaluate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          if (!r.ok) { throw new Error(j.detail ? JSON.stringify(j.detail) : "HTTP " + r.status); }
+          return j;
+        });
+      })
+      .then(function (d) { render(d); return verify(); })
+      .catch(function (err) {
+        errBox.hidden = false;
+        errBox.textContent = "Request failed: " + err.message;
+      })
+      .then(function () {
+        btn.disabled = false;
+        label.textContent = "Evaluate policy";
+      });
+  });
+
+  function verify() {
+    return fetch("/audit/verify")
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var el = document.getElementById("chain_state");
+        el.textContent = j.status;
+        el.className = "state " + (j.status === "VERIFIED" ? "ok" : "bad");
+      })
+      .catch(function () {});
+  }
+  document.getElementById("verify").addEventListener("click", verify);
+})();
+</script>
+</body>
+</html>
