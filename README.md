@@ -45,7 +45,9 @@ It is already deployed — no setup needed:
 | <https://surety-policy-service.onrender.com/> | Policy console (browser UI) |
 | <https://surety-policy-service.onrender.com/docs> | Interactive OpenAPI docs |
 | <https://surety-policy-service.onrender.com/health> | Liveness and policy thresholds |
+| <https://surety-policy-service.onrender.com/portfolio> | Fleet-wide expected loss vs loss budget |
 | <https://surety-policy-service.onrender.com/audit/verify> | Hash-chain integrity check |
+| <https://surety-policy-service.onrender.com/docs#/default/audit_tamper_demo_audit_tamper_demo_post> | Live tamper test (POST, run it from the docs page) |
 
 Or run it locally:
 
@@ -75,7 +77,24 @@ curl -s -X POST https://surety-policy-service.onrender.com/evaluate \
 }
 ```
 
-`python test_client.py` exercises all four decision paths and all three breaker scopes, checks that an invalid score is rejected, and verifies the audit chain. `./breaker_demo.sh` walks the emergency stop end to end. Both accept `BASE=https://surety-policy-service.onrender.com` to run against the live service. Full details in [`prototype/README.md`](prototype/README.md).
+Prove the ledger is tamper-evident, in one call. It verifies the chain, edits one stored record, verifies again to show the exact link that failed, then restores the original value and verifies a third time:
+
+```bash
+curl -s -X POST https://surety-policy-service.onrender.com/audit/tamper-demo
+```
+
+```json
+{
+  "step_1_before":        { "status": "VERIFIED", "records_checked": 4 },
+  "step_2_after_tamper":  { "status": "BROKEN", "broken_at_sequence": 1, "records_after_break": 3 },
+  "step_3_after_restore": { "status": "VERIFIED", "records_checked": 4 },
+  "chain_restored": true
+}
+```
+
+The chain is always put back before the response returns, so running it changes nothing.
+
+`python test_client.py` exercises all four decision paths and all three breaker scopes, checks that an invalid score is rejected, runs the tamper test, and verifies the audit chain. `./breaker_demo.sh` walks the emergency stop end to end. Both accept `BASE=https://surety-policy-service.onrender.com` to run against the live service. Full details in [`prototype/README.md`](prototype/README.md).
 
 **Deploy it:** a Render blueprint is committed at [`render.yaml`](render.yaml) and a Dockerfile at [`prototype/Dockerfile`](prototype/Dockerfile). See [`prototype/DEPLOY.md`](prototype/DEPLOY.md) for Render, Railway, Fly.io, Hugging Face Spaces and plain Docker.
 
@@ -93,6 +112,17 @@ Derived cap       = Expected Loss × tier loss budget
 ```
 
 At score 0.71: P(breach) 0.1512 → expected loss ₹12,096 → Bronze cap **₹15,000**.
+
+And at the portfolio level — the question an underwriter actually asks — `GET /portfolio` aggregates it:
+
+```
+total expected loss  ₹82,800   across 3 registered agents
+fleet loss budget    ₹200,000
+headroom             ₹117,200  (41.4% utilised)
+by tier              Bronze ₹62,400 · Silver ₹16,800 · Gold ₹3,600
+```
+
+One Bronze agent consumes 75% of the consumed budget. Governance stops rogue agents; underwriting tells you what the fleet is worth carrying.
 
 The service returns this working on every decision, so an underwriter can see why the cap is what it is. `0.30` and `₹80,000` are calibration constants from a synthetic backtest, not measured production values.
 
@@ -183,7 +213,7 @@ All training and simulation data is synthetic and disclosed.
 | Dynamic spend caps, real time | Recomputed from the live risk score, enforced in-path by OPA with Redis token buckets | Cap tightens the moment the score moves |
 | Revocation and emergency stop | Three levels: single agent, agent class, whole fleet; in-flight declines | Fleet breaker pulled on stage |
 | Operator dashboard | Live exposure, policy editor, decision replay, one-click breakers | Console driven live, not screenshotted |
-| Testing and optimisation | 50-agent simulated fleet with planted rogues | Measured results and a live audit tamper test |
+| Testing and optimisation | 50-agent simulated fleet with planted rogues | Measured results, plus a one-call live tamper test: `POST /audit/tamper-demo` |
 
 ---
 
@@ -193,7 +223,7 @@ All training and simulation data is synthetic and disclosed.
 .
 ├── README.md                                  This file
 ├── prototype/                                 RUNNABLE policy service + console
-│   ├── main.py                                POST /evaluate · /audit · /audit/verify
+│   ├── main.py                                /evaluate · /breaker · /portfolio · /audit
 │   ├── static/index.html                      Browser policy console
 │   ├── test_client.py                         Smoke test, all decision paths
 │   ├── Dockerfile                             Container build

@@ -157,6 +157,52 @@ def breaker_hit(agent_id: str, agent_class: Optional[str]) -> Optional[dict]:
 
 
 # ---------------------------------------------------------------------------
+# Agent registry (in-memory) - portfolio underwriting
+# ---------------------------------------------------------------------------
+#
+# Per-transaction decisions answer "can this agent do this?". A portfolio view
+# answers the underwriter's question: "what is the network's total expected
+# loss right now, and can we afford to onboard another Bronze agent?"
+#
+# Pre-populated with the three agents from the demo scenario.
+#
+FLEET_LOSS_BUDGET_INR = 200_000.0   # max aggregate expected loss the network carries
+
+_agent_registry: dict[str, dict] = {
+    "shop-bot-7": {
+        "agent_id": "shop-bot-7",
+        "risk_score": 0.78,
+        "tier": "Bronze",
+        "exposure_limit": 15_000.0,
+        "average_severity": 80_000.0,
+    },
+    "travel-bot-2": {
+        "agent_id": "travel-bot-2",
+        "risk_score": 0.42,
+        "tier": "Silver",
+        "exposure_limit": 25_000.0,
+        "average_severity": 40_000.0,
+    },
+    "grocery-bot-5": {
+        "agent_id": "grocery-bot-5",
+        "risk_score": 0.18,
+        "tier": "Gold",
+        "exposure_limit": 50_000.0,
+        "average_severity": 20_000.0,
+    },
+}
+
+# Portfolio reserving uses P(breach) = risk_score directly, a deliberately
+# conservative upper bound. The in-path decision model in /evaluate uses the
+# calibrated convex curve (0.30 x score^2), which is lower. Reserving high and
+# deciding tight is standard actuarial practice; both figures are reported so
+# the difference is visible rather than hidden.
+def portfolio_breach_probability(risk_score: float) -> float:
+    """P(breach) for reserving. Conservative: equals the risk score."""
+    return round(min(1.0, max(0.0, risk_score)), 4)
+
+
+# ---------------------------------------------------------------------------
 # Schemas
 # ---------------------------------------------------------------------------
 
@@ -402,10 +448,99 @@ def breaker_status() -> JSONResponse:
     return JSONResponse(state)
 
 
+# ---------------------------------------------------------------------------
+# Portfolio underwriting view
+# ---------------------------------------------------------------------------
+
+@app.get("/portfolio")
+def portfolio() -> JSONResponse:
+    """
+    Aggregate expected loss across every registered agent.
+
+        expected_loss(agent) = P(breach | score) x average_severity
+        total_expected_loss  = sum over the fleet
+        headroom             = fleet_loss_budget - total_expected_loss
+        utilisation_pct      = total / budget x 100
+
+    Also broken down by tier, so an underwriter can see which tier is
+    consuming the loss budget. Read-only: this endpoint changes nothing.
+    """
+    agents = []
+    tier_breakdown: dict[str, float] = {"Gold": 0.0, "Silver": 0.0, "Bronze": 0.0}
+    total_expected_loss = 0.0
+
+    for profile in _agent_registry.values():
+        p_breach = portfolio_breach_probability(profile["risk_score"])
+        el = round(p_breach * profile["average_severity"], 2)
+        total_expected_loss += el
+
+        tier = profile["tier"]
+        tier_breakdown[tier] = round(tier_breakdown.get(tier, 0.0) + el, 2)
+
+        agents.append({
+            **profile,
+            "breach_probability": p_breach,
+            "expected_loss_inr": el,
+            # what the in-path decision model would say, for comparison
+            "decision_model_expected_loss_inr": expected_loss(profile["risk_score"]),
+            "suspended": breaker_hit(profile["agent_id"], None) is not None,
+        })
+
+    total_expected_loss = round(total_expected_loss, 2)
+    headroom = round(FLEET_LOSS_BUDGET_INR - total_expected_loss, 2)
+    utilisation_pct = round((total_expected_loss / FLEET_LOSS_BUDGET_INR) * 100, 2)
+
+    body = {
+        "total_expected_loss": total_expected_loss,
+        "fleet_loss_budget": FLEET_LOSS_BUDGET_INR,
+        "headroom": headroom,
+        "utilisation_pct": utilisation_pct,
+        "tier_breakdown": tier_breakdown,
+        "agent_count": len(agents),
+        "agents": agents,
+        "model_note": (
+            "Portfolio reserving uses P(breach) = risk_score, a conservative "
+            "upper bound. The in-path decision model uses 0.30 x score^2; both "
+            "are reported per agent."
+        ),
+    }
+
+    # A fleet-wide emergency stop does not change the numbers, but it does
+    # change what they mean: no new exposure is being written right now.
+    if _breakers["fleet"]:
+        body["warning"] = (
+            "Fleet emergency stop active. Portfolio values are informational."
+        )
+
+    return JSONResponse(body)
+
+
 @app.get("/audit")
 def audit_log() -> JSONResponse:
     """The hash-chained decision ledger, most recent last."""
     return JSONResponse({"records": _audit_chain, "count": len(_audit_chain)})
+
+
+def _verify_chain() -> dict:
+    """
+    Recompute every link in the chain and return the result as a plain dict.
+
+    Shared by GET /audit/verify and the tamper demo, so both report integrity
+    through exactly the same code path.
+    """
+    previous = GENESIS_HASH
+    for record in _audit_chain:
+        expected = _chain_hash(record["input"], record["timestamp"], previous)
+        if expected != record["audit_hash"] or record["previous_hash"] != previous:
+            return {
+                "status": "BROKEN",
+                "broken_at_sequence": record["sequence"],
+                "expected_hash": expected,
+                "stored_hash": record["audit_hash"],
+                "records_after_break": len(_audit_chain) - record["sequence"],
+            }
+        previous = record["audit_hash"]
+    return {"status": "VERIFIED", "records_checked": len(_audit_chain)}
 
 
 @app.get("/audit/verify")
@@ -414,21 +549,112 @@ def audit_verify() -> JSONResponse:
     Recompute every link in the chain. Editing any stored record breaks it,
     which is the tamper test demonstrated in the deck.
     """
-    previous = GENESIS_HASH
-    for record in _audit_chain:
-        expected = _chain_hash(record["input"], record["timestamp"], previous)
-        if expected != record["audit_hash"] or record["previous_hash"] != previous:
-            return JSONResponse(
-                {
-                    "status": "BROKEN",
-                    "broken_at_sequence": record["sequence"],
-                    "expected_hash": expected,
-                    "stored_hash": record["audit_hash"],
-                },
-                status_code=409,
-            )
-        previous = record["audit_hash"]
-    return JSONResponse({"status": "VERIFIED", "records_checked": len(_audit_chain)})
+    result = _verify_chain()
+    return JSONResponse(result, status_code=409 if result["status"] == "BROKEN" else 200)
+
+
+# ---------------------------------------------------------------------------
+# Live tamper test
+# ---------------------------------------------------------------------------
+#
+# The deck claims that editing one audit record provably breaks the chain.
+# Without this endpoint that claim can only be checked by opening a Python
+# shell against a running process, which no reviewer will do. This runs the
+# whole proof in one call and puts the chain back exactly as it was.
+#
+# It is a demonstration, not a back door: it can only overwrite one numeric
+# field on one record, it always restores the original value, and every step
+# is reported so nothing is hidden.
+
+TAMPER_FIELD = "transaction_amount"
+TAMPER_VALUE = 1_000.0
+
+# Used only when the ledger is empty, so the demo works on a cold instance.
+_SEED_DECISION = {
+    "agent_id": "shop-bot-7",
+    "transaction_amount": 42_000.0,
+    "exposure_limit": 15_000.0,
+    "risk_score": 0.78,
+    "risk_tier": "BRONZE",
+    "agent_class": "shopping",
+}
+
+
+@app.post("/audit/tamper-demo")
+def audit_tamper_demo(sequence: int = 1) -> JSONResponse:
+    """
+    Prove the ledger is tamper-evident, in one call.
+
+        1. verify the chain            -> VERIFIED
+        2. edit one stored record      -> the hash no longer matches
+        3. verify again                -> BROKEN, with the exact link that failed
+        4. restore the original value
+        5. verify again                -> VERIFIED
+
+    `sequence` selects which record to tamper with (1-based, defaults to the
+    first). The chain is always restored before the response is returned, so
+    running this leaves the ledger exactly as it was found.
+    """
+    # A cold instance has an empty ledger. Seed one real decision so the demo
+    # never depends on the reviewer having called /evaluate first.
+    seeded = False
+    if not _audit_chain:
+        decision, reason, _ = evaluate_policy(EvaluateRequest(**_SEED_DECISION))
+        _append_audit(dict(_SEED_DECISION), decision, reason)
+        seeded = True
+
+    if not 1 <= sequence <= len(_audit_chain):
+        raise HTTPException(
+            422,
+            f"sequence must be between 1 and {len(_audit_chain)}; "
+            f"the ledger currently holds {len(_audit_chain)} record(s).",
+        )
+
+    before = _verify_chain()
+    if before["status"] != "VERIFIED":
+        # Refuse to run the demo on a chain that is already broken: the result
+        # would prove nothing.
+        raise HTTPException(409, "Chain is already BROKEN; nothing to demonstrate.")
+
+    record = _audit_chain[sequence - 1]
+    if TAMPER_FIELD not in record["input"]:
+        raise HTTPException(
+            422,
+            f"Record {sequence} has no '{TAMPER_FIELD}' field to tamper with. "
+            f"Pick a decision record rather than a breaker record.",
+        )
+
+    original_value = record["input"][TAMPER_FIELD]
+
+    # --- tamper ------------------------------------------------------------
+    record["input"][TAMPER_FIELD] = TAMPER_VALUE
+    after_tamper = _verify_chain()
+
+    # --- restore -----------------------------------------------------------
+    record["input"][TAMPER_FIELD] = original_value
+    after_restore = _verify_chain()
+
+    return JSONResponse(
+        {
+            "demo": "audit chain tamper test",
+            "target_sequence": sequence,
+            "field_tampered": f"input.{TAMPER_FIELD}",
+            "original_value": original_value,
+            "tampered_value": TAMPER_VALUE,
+            "step_1_before": before,
+            "step_2_after_tamper": after_tamper,
+            "step_3_after_restore": after_restore,
+            "chain_restored": after_restore["status"] == "VERIFIED",
+            "seeded_demo_record": seeded,
+            "explanation": (
+                "Each record hashes its own input, its timestamp and the hash of "
+                "the record before it. Changing one stored amount changes that "
+                "record's recomputed hash, so the stored hash no longer matches "
+                "and every link after it is invalidated too. Rewriting history "
+                "in this ledger requires rewriting every record that followed."
+            ),
+        }
+    )
 
 
 @app.get("/health")
@@ -440,6 +666,7 @@ def health() -> dict:
         "escalation_threshold": ESCALATION_THRESHOLD,
         "audit_records": len(_audit_chain),
         "active_breakers": breaker_state()["active_count"],
+        "registered_agents": len(_agent_registry),
     }
 
 

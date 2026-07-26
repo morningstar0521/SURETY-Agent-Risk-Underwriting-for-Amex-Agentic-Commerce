@@ -43,8 +43,10 @@ uvicorn main:app --reload
 | `POST` | `/evaluate` | Evaluate one agent transaction |
 | `POST` | `/breaker` | Emergency stop: trip or release a circuit breaker |
 | `GET` | `/breaker/status` | Current breaker state across all three scopes |
+| `GET` | `/portfolio` | Aggregate expected loss across the registered fleet |
 | `GET` | `/audit` | Full hash-chained decision ledger |
 | `GET` | `/audit/verify` | Recompute every link; returns `VERIFIED` or `BROKEN` |
+| `POST` | `/audit/tamper-demo` | Live tamper test: break the chain, prove it, restore it |
 | `GET` | `/health` | Status and policy constants |
 
 ### `POST /evaluate`
@@ -231,6 +233,48 @@ Precedence is most specific first: agent, then class, then fleet. Releasing a fl
 
 ---
 
+## Portfolio underwriting
+
+Per-transaction decisions answer *"can this agent do this?"*. `GET /portfolio` answers the underwriter's question: *"what is the network's total expected loss right now, and can we afford another Bronze agent?"*
+
+```bash
+curl -s http://127.0.0.1:8000/portfolio
+```
+
+```json
+{
+  "total_expected_loss": 82800.0,
+  "fleet_loss_budget": 200000.0,
+  "headroom": 117200.0,
+  "utilisation_pct": 41.4,
+  "tier_breakdown": { "Gold": 3600.0, "Silver": 16800.0, "Bronze": 62400.0 },
+  "agent_count": 3,
+  "agents": [ ... ]
+}
+```
+
+The registry ships pre-populated with the three demo agents:
+
+| Agent | Score | Tier | Exposure limit | Avg severity | Expected loss |
+|---|---|---|---|---|---|
+| `shop-bot-7` | 0.78 | Bronze | ₹15,000 | ₹80,000 | **₹62,400** |
+| `travel-bot-2` | 0.42 | Silver | ₹25,000 | ₹40,000 | ₹16,800 |
+| `grocery-bot-5` | 0.18 | Gold | ₹50,000 | ₹20,000 | ₹3,600 |
+
+One Bronze agent consumes 75% of the fleet's consumed budget. That is the argument for tiering, in one number.
+
+**Two probability models, both reported.** Portfolio reserving uses `P(breach) = risk_score` — a deliberately conservative upper bound. The in-path decision model in `/evaluate` uses the calibrated convex curve `0.30 × score²`, which is lower. Reserving high while deciding tight is standard practice; each agent object carries both `expected_loss_inr` and `decision_model_expected_loss_inr` so the difference is visible rather than hidden.
+
+**Under a fleet emergency stop** the endpoint still returns full data, plus:
+
+```json
+"warning": "Fleet emergency stop active. Portfolio values are informational."
+```
+
+`/portfolio` is read-only and changes nothing.
+
+---
+
 **Verify the audit chain.**
 
 ```bash
@@ -252,21 +296,58 @@ service, shows that an unaffected agent keeps trading at each step, prints the
 breaker state, releases everything, and lists the breaker entries in the audit
 ledger. Point it at a deployed instance with `BASE=https://your.app ./breaker_demo.sh`.
 
-Runs all four decision paths, trips and releases a breaker at each of the three scopes, checks that an out-of-range score is rejected with HTTP 422, and verifies the audit chain. Exit code 0 on success.
+Runs all four decision paths, trips and releases a breaker at each of the three scopes, checks that an out-of-range score is rejected with HTTP 422, runs the live tamper test, and verifies the audit chain. Eleven checks, exit code 0 on success.
 
 ---
 
 ## The tamper test
 
-The deck promises a live demonstration that editing one audit record provably breaks the chain. To reproduce it in a Python shell against a running process:
+The deck promises a live demonstration that editing one audit record provably breaks the chain. `POST /audit/tamper-demo` runs the whole proof in one call:
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/audit/tamper-demo
+```
+
+```json
+{
+  "demo": "audit chain tamper test",
+  "target_sequence": 1,
+  "field_tampered": "input.transaction_amount",
+  "original_value": 42000.0,
+  "tampered_value": 1000.0,
+  "step_1_before":        { "status": "VERIFIED", "records_checked": 4 },
+  "step_2_after_tamper":  { "status": "BROKEN", "broken_at_sequence": 1,
+                            "records_after_break": 3,
+                            "expected_hash": "9f187da9...", "stored_hash": "0c6b321e..." },
+  "step_3_after_restore": { "status": "VERIFIED", "records_checked": 4 },
+  "chain_restored": true
+}
+```
+
+What it does, in order: verify the chain, overwrite one stored `transaction_amount`, verify again and report the exact link that failed, restore the original value, verify a third time. The chain is always put back before the response is returned, so running it leaves the ledger exactly as it was found.
+
+Each record hashes its own input, its timestamp and the hash of the record before it. Changing one stored amount invalidates that record and every record after it: `records_after_break` counts them. Rewriting history here means rewriting the whole tail.
+
+Pass `?sequence=N` to target a different record:
+
+```bash
+curl -s -X POST "http://127.0.0.1:8000/audit/tamper-demo?sequence=2"
+```
+
+Guardrails, so the demo cannot be mistaken for a back door:
+
+- it only ever writes to one numeric field, `transaction_amount`, on one record
+- it refuses with HTTP 422 if that record is a breaker entry rather than a decision
+- it refuses with HTTP 409 if the chain is already broken, since the result would prove nothing
+- on a cold instance with an empty ledger it seeds one real decision first, and says so via `seeded_demo_record`, so the endpoint works standalone
+
+To reproduce it by hand instead, in a Python shell against a running process:
 
 ```python
 import main
 main._audit_chain[0]["input"]["transaction_amount"] = 1000   # tamper
 # GET /audit/verify now returns HTTP 409 and {"status": "BROKEN", ...}
 ```
-
-Each record hashes the previous one, so a single edit invalidates every link after it.
 
 ---
 

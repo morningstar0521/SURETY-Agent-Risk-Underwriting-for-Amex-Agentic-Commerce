@@ -12,10 +12,13 @@ then run:
 """
 
 import json
+import os
 import urllib.error
 import urllib.request
 
-BASE = "http://127.0.0.1:8000"
+# Point at a deployed instance with:
+#   BASE=https://surety-policy-service.onrender.com python test_client.py
+BASE = os.environ.get("BASE", "http://127.0.0.1:8000").rstrip("/")
 
 CASES = [
     (
@@ -114,6 +117,21 @@ def main() -> None:
     ok = restored["decision"] == "ALLOW"
     failures += 0 if ok else 1
     print(f"[{'PASS' if ok else 'FAIL'}] All breakers released, traffic flows again")
+    print()
+
+    # --- live tamper test --------------------------------------------------
+    demo = post("/audit/tamper-demo", {})
+    ok = (demo["step_1_before"]["status"] == "VERIFIED"
+          and demo["step_2_after_tamper"]["status"] == "BROKEN"
+          and demo["step_3_after_restore"]["status"] == "VERIFIED"
+          and demo["chain_restored"] is True)
+    failures += 0 if ok else 1
+    print(f"[{'PASS' if ok else 'FAIL'}] Tamper test: editing record "
+          f"{demo['target_sequence']} breaks the chain, restore repairs it")
+    print(f"       {demo['step_1_before']['status']} -> "
+          f"{demo['step_2_after_tamper']['status']} at sequence "
+          f"{demo['step_2_after_tamper']['broken_at_sequence']} -> "
+          f"{demo['step_3_after_restore']['status']}")
     print()
 
     chain = get("/audit/verify")

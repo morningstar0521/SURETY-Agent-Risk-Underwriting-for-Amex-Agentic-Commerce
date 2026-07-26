@@ -40,7 +40,11 @@ Live prototype: https://surety-policy-service.onrender.com/
         /evaluate        POST, evaluate one agent transaction
         /breaker         POST, emergency stop at agent / class / fleet scope
         /breaker/status  GET, current breaker state
+        /portfolio       GET, fleet-wide expected loss against the loss budget
         /audit/verify    GET, recompute the hash chain
+        /audit/tamper-demo
+                         POST, live tamper test: breaks one record, proves the
+                         chain detects it, then restores it
 
     The instance is on a free tier and sleeps after 15 minutes idle, so the
     first request may take about 30 seconds to wake it.
