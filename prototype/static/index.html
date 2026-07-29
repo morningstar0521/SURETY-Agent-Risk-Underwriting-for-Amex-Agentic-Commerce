@@ -268,7 +268,7 @@
           <p class="hint" id="limit-hint" aria-live="polite"></p>
 
           <div class="field">
-            <label for="risk_score">Risk score <span style="font-weight:400;color:var(--dim)">(0.00 safest — 1.00 riskiest)</span></label>
+            <label for="risk_score">Risk score <span style="font-weight:400;color:var(--dim)">(0.00 safest - 1.00 riskiest)</span></label>
             <div class="slider-row">
               <input id="risk_score" name="risk_score" type="range" min="0" max="1" step="0.01" value="0.78"
                      aria-describedby="score-hint">
@@ -280,10 +280,10 @@
           <div class="field">
             <label for="risk_tier">Risk tier</label>
             <select id="risk_tier" name="risk_tier">
-              <option value="GOLD">Gold — lowest risk, widest limits</option>
-              <option value="SILVER">Silver — moderate risk</option>
-              <option value="BRONZE" selected>Bronze — elevated risk, tight caps</option>
-              <option value="CRITICAL">Critical — escalation only</option>
+              <option value="GOLD">Gold: lowest risk, widest limits</option>
+              <option value="SILVER">Silver: moderate risk</option>
+              <option value="BRONZE" selected>Bronze: elevated risk, tight caps</option>
+              <option value="CRITICAL">Critical: escalation only</option>
             </select>
           </div>
 
@@ -312,7 +312,7 @@
         <span class="eyebrow gold" id="record-h">DECISION RECORD</span>
         <span class="chain">
           <span>Audit chain</span>
-          <span class="state" id="chain_state">—</span>
+          <span class="state" id="chain_state">-</span>
           <button type="button" class="preset" id="verify" style="min-height:32px;flex:0 0 auto">Verify</button>
         </span>
       </div>
@@ -325,12 +325,12 @@
       <p class="reason" id="reason">The reason string returned by the policy engine appears here, with the exact figures that drove the outcome.</p>
 
       <div class="kv" id="kv">
-        <div><div class="k">RISK SCORE</div><div class="v" id="v_score">—</div></div>
-        <div><div class="k">EXPOSURE LIMIT</div><div class="v gold" id="v_limit">—</div></div>
-        <div><div class="k">EXPECTED LOSS</div><div class="v gold" id="v_el">—</div></div>
-        <div><div class="k">DERIVED CAP</div><div class="v" id="v_cap">—</div></div>
-        <div><div class="k">P(BREACH)</div><div class="v" id="v_p">—</div></div>
-        <div><div class="k">EVALUATED IN</div><div class="v" id="v_ms">—</div></div>
+        <div><div class="k">RISK SCORE</div><div class="v" id="v_score">-</div></div>
+        <div><div class="k">EXPOSURE LIMIT</div><div class="v gold" id="v_limit">-</div></div>
+        <div><div class="k">EXPECTED LOSS</div><div class="v gold" id="v_el">-</div></div>
+        <div><div class="k">DERIVED CAP</div><div class="v" id="v_cap">-</div></div>
+        <div><div class="k">P(BREACH)</div><div class="v" id="v_p">-</div></div>
+        <div><div class="k">EVALUATED IN</div><div class="v" id="v_ms">-</div></div>
       </div>
 
       <div class="math">
@@ -340,8 +340,8 @@ Derived cap   = Expected Loss × tier loss budget</div>
       </div>
 
       <div class="hashline">
-        <b>audit_hash</b> <span id="v_hash">—</span><br>
-        <b>previous</b> &nbsp;&nbsp;<span id="v_prev">—</span>
+        <b>audit_hash</b> <span id="v_hash">-</span><br>
+        <b>previous</b> &nbsp;&nbsp;<span id="v_prev">-</span>
       </div>
 
       <div class="card-body" style="border-top:1px solid var(--hair)">
