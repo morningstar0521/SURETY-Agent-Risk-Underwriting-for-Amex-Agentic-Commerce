@@ -265,6 +265,7 @@
               <input id="exposure_limit" name="exposure_limit" type="number" min="0" step="500" value="15000" required>
             </div>
           </div>
+          <p class="hint" id="limit-hint" aria-live="polite"></p>
 
           <div class="field">
             <label for="risk_score">Risk score <span style="font-weight:400;color:var(--dim)">(0.00 safest — 1.00 riskiest)</span></label>
@@ -381,6 +382,33 @@ Derived cap   = Expected Loss × tier loss budget</div>
   range.addEventListener("input", syncScore);
   syncScore();
 
+  // The amount and the limit decide the outcome before the score does. Without
+  // this line a reviewer slides the score down, still sees DENY, and assumes
+  // the engine is broken. Say why, before they press the button.
+  var amtEl   = document.getElementById("transaction_amount");
+  var limEl   = document.getElementById("exposure_limit");
+  var limHint = document.getElementById("limit-hint");
+
+  function syncLimit() {
+    var a = Number(amtEl.value), l = Number(limEl.value);
+    if (!isFinite(a) || !isFinite(l)) { limHint.textContent = ""; return; }
+    if (a > l) {
+      limHint.style.color = "var(--red)";
+      limHint.textContent =
+        inr(a) + " is " + inr(a - l) + " over the " + inr(l) +
+        " limit, so this denies at any score below 0.90 and escalates above it. " +
+        "Lower the amount to see the score decide.";
+    } else {
+      limHint.style.color = "var(--dim)";
+      limHint.textContent =
+        inr(a) + " is within the " + inr(l) + " limit. The risk score decides: " +
+        "below 0.90 allows, 0.90 and above escalates.";
+    }
+  }
+  amtEl.addEventListener("input", syncLimit);
+  limEl.addEventListener("input", syncLimit);
+  syncLimit();
+
   Array.prototype.forEach.call(document.querySelectorAll(".preset[data-preset]"), function (b) {
     b.addEventListener("click", function () {
       var p = PRESETS[b.getAttribute("data-preset")];
@@ -390,6 +418,7 @@ Derived cap   = Expected Loss × tier loss budget</div>
       range.value = p.risk_score;
       document.getElementById("risk_tier").value = p.risk_tier;
       syncScore();
+      syncLimit();
     });
   });
 

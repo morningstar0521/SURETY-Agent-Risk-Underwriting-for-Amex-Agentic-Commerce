@@ -97,7 +97,8 @@ NOTES
     mockups/appendix_a_architecture.png, for reviewers who prefer to read it
     outside the deck.
 
-2.  Video walkthrough:  [Video Link]
+2.  Video walkthrough:
+    https://drive.google.com/file/d/17leJ1A4_X2td4Gr2oiL1quxUGx249yxo/view
     A short narrated run through the demo scenario end to end.
 
 3.  Source repository:

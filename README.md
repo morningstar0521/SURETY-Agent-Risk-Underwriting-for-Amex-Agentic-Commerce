@@ -292,7 +292,7 @@ Navy `#0B1F3A` field · Amex blue `#016FD0` for structure and data flow · gold 
 
 - Live prototype: <https://surety-policy-service.onrender.com/>
 - Repository: <https://github.com/morningstar0521/SURETY-Agent-Risk-Underwriting-for-Amex-Agentic-Commerce>
-- Video walkthrough: `[Video Link]`
+- Video walkthrough: <https://drive.google.com/file/d/17leJ1A4_X2td4Gr2oiL1quxUGx249yxo/view>
 
 ---
 
